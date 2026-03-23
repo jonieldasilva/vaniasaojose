@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vania São José</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:  #0a0f50;
+      --white: #ffffff;
+      --gold:  #f4b942;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--blue);
+      color: var(--white);
+      font-family: 'Red Hat Text', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── SLIDESHOW — grayscale + multiply ── */
+    .slides {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: var(--blue);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.8s ease;
+      animation: slowZoom 10s ease forwards;
+      /* grayscale + multiply = photo tinted blue */
+      filter: grayscale(100%);
+      mix-blend-mode: multiply;
+    }
+
+    .slide.active { opacity: 1; }
+
+    @keyframes slowZoom {
+      from { transform: scale(1.04); }
+      to   { transform: scale(1.00); }
+    }
+
+    /* ── VIGNETTE on top of everything ── */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(5,8,60,0.65) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* ── STAGE ── */
+    .stage {
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    /* ── MONOGRAM BLOCK ── */
+    .monogram-block {
+      display: flex;
+      align-items: baseline;
+      gap: 0.1em;
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards 0.5s;
+    }
+
+    /* the two slashes */
+    .slashes {
+      font-family: 'EB Garamond', serif;
+      font-weight: 400;
+      font-size: clamp(4rem, 12vw, 9.5rem);
+      line-height: 1;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: -0.05em;
+      /* slight italic lean for the slash feel */
+      font-style: italic;
+      margin-right: 0.15em;
+    }
+
+    /* vsj */
+    .vsj {
+      font-family: 'EB Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(6rem, 18vw, 14rem);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+
+    /* ── TAGLINE ── */
+    .tagline {
+      margin-top: 2.8rem;
+      font-family: 'EB Garamond', serif;
+      font-weight: 400;
+      font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1.2s;
+    }
+
+    .tagline strong {
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    /* ── CITY LABEL ── */
+    .city-label {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Red Hat Text', sans-serif;
+      font-weight: 300;
+      font-size: 0.56rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      z-index: 10;
+      white-space: nowrap;
+      transition: opacity 0.6s ease;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: var(--gold);
+      width: 0%;
+      z-index: 20;
+      opacity: 0.55;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slides" id="slides"></div>
+  <div class="vignette"></div>
+  <div class="progress" id="progress"></div>
+  <p class="city-label" id="cityLabel"></p>
+
+  <main class="stage">
+    <div class="monogram-block">
+      <span class="slashes">\\</span><span class="vsj">vsj</span>
+    </div>
+    <p class="tagline">
+      Algumas coisas só existem depois que alguém as vê. <strong>Aguarde.</strong>
+    </p>
+  </main>
+
+  <script>
+    const cities = [
+      { name: 'Nova York',    url: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1800&q=80' },
+      { name: 'Tóquio',       url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1800&q=80' },
+      { name: 'Paris',        url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1800&q=80' },
+      { name: 'Hong Kong',    url: 'https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=1800&q=80' },
+      { name: 'São Paulo',    url: 'https://images.unsplash.com/photo-1554168848-228452c09d60?w=1800&q=80' },
+      { name: 'Londres',      url: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1800&q=80' },
+      { name: 'Dubai',        url: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=80' },
+      { name: 'Chicago',      url: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1800&q=80' },
+      { name: 'Singapura',    url: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=1800&q=80' },
+      { name: 'Buenos Aires', url: 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=1800&q=80' },
+    ];
+
+    cities.sort(() => Math.random() - 0.5);
+
+    const slidesEl   = document.getElementById('slides');
+    const labelEl    = document.getElementById('cityLabel');
+    const progressEl = document.getElementById('progress');
+    const DURATION   = 7000;
+    let current      = 0;
+
+    const slideEls = cities.map(city => {
+      const div = document.createElement('div');
+      div.className = 'slide';
+      div.style.backgroundImage = `url('${city.url}')`;
+      slidesEl.appendChild(div);
+      return div;
+    });
+
+    function goTo(idx) {
+      slideEls.forEach(el => {
+        el.classList.remove('active');
+        el.style.animation = 'none';
+      });
+      const el = slideEls[idx];
+      void el.offsetWidth;
+      el.style.animation = '';
+      el.classList.add('active');
+
+      // fade label
+      labelEl.style.opacity = '0';
+      setTimeout(() => {
+        labelEl.textContent = cities[idx].name;
+        labelEl.style.opacity = '1';
+      }, 400);
+
+      // progress bar reset
+      progressEl.style.transition = 'none';
+      progressEl.style.width = '0%';
+      void progressEl.offsetWidth;
+      progressEl.style.transition = `width ${DURATION}ms linear`;
+      progressEl.style.width = '100%';
+    }
+
+    function next() {
+      current = (current + 1) % cities.length;
+      goTo(current);
+    }
+
+    const img = new Image();
+    img.src = cities[0].url;
+    img.onload = () => { goTo(0); setInterval(next, DURATION); };
+    setTimeout(() => {
+      if (!slideEls[0].classList.contains('active')) {
+        goTo(0); setInterval(next, DURATION);
+      }
+    }, 2000);
+  </script>
+
+</body>
+</html>
