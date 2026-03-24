@@ -216,6 +216,16 @@
   </main>
 
   <script>
+    const palette = ['#e63946', '#a8dadc', '#457b9d', '#1d3557'];
+    let lastColorIdx = -1;
+
+    function randomColor() {
+      let idx;
+      do { idx = Math.floor(Math.random() * palette.length); } while (idx === lastColorIdx);
+      lastColorIdx = idx;
+      return palette[idx];
+    }
+
     const cities = [
       { name: 'Nova York',    url: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1800&q=80' },
       { name: 'Tóquio',       url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1800&q=80' },
@@ -254,6 +264,8 @@
       void el.offsetWidth;
       el.style.animation = '';
       el.classList.add('active');
+
+      slidesEl.style.background = randomColor();
 
       labelEl.style.opacity = '0';
       setTimeout(() => {
